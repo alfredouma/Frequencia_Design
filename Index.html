@@ -8,16 +8,28 @@
     <style>
         /* ------------------ VARIÁVEIS E TEMA ------------------ */
         :root {
-            color-scheme: light dark;
-            --bg: light-dark(#f5f5f5, #151515);
-            --bg-elevated: light-dark(#ffffff, #222222);
-            --text: light-dark(#111111, #f5f5f5);
-            --muted: light-dark(#666666, #bbbbbb);
+            /* tema claro por defeito */
+            color-scheme: light;
+            --bg: #f5f5f5;
+            --bg-elevated: #ffffff;
+            --text: #111111;
+            --muted: #666666;
             --accent: #004b9b;
             --accent-soft: rgba(0, 75, 155, 0.08);
-            --border: light-dark(#d0d0d0, #333333);
+            --border: #d0d0d0;
             --radius: 10px;
             --shadow-soft: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        /* quando o toggle está ativo → tema escuro */
+        :root:has(#theme-toggle:checked) {
+            color-scheme: dark;
+            --bg: #151515;
+            --bg-elevated: #222222;
+            --text: #f5f5f5;
+            --muted: #bbbbbb;
+            --border: #333333;
+            --accent-soft: rgba(0, 75, 155, 0.25);
         }
 
         * {
@@ -83,6 +95,7 @@
             display: flex;
             justify-content: center;
             gap: .75rem;
+            align-items: center;
         }
 
         .header-nav button {
@@ -145,6 +158,47 @@
             display: block;
             font-size: .9rem;
             color: var(--text);
+        }
+
+        /* --- TOGGLE DE TEMA --- */
+
+        .theme-switch {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .4rem .8rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--bg-elevated);
+            transition: .2s;
+            font-size: .8rem;
+            color: var(--muted);
+        }
+
+        .theme-switch:hover {
+            background: var(--accent-soft);
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .theme-switch .icon {
+            font-size: 1.1rem;
+        }
+
+        .icon-sun {
+            display: none;
+        }
+
+        /* quando está em modo escuro, mostra sol e esconde lua */
+        :root:has(#theme-toggle:checked) .icon-moon {
+            display: none;
+        }
+
+        :root:has(#theme-toggle:checked) .icon-sun {
+            display: inline;
         }
 
         /* ------------------ MAIN ------------------ */
@@ -516,63 +570,58 @@
             background: rgba(0,0,0,0.02);
         }
 
+        /* ---- ASSIDUIDADE PROFISSIONAL ---- */
 
+        .estado-tag {
+            padding: .35rem .7rem;
+            border-radius: 999px;
+            font-size: .75rem;
+            display: inline-block;
+        }
 
-            /* ---- ASSIDUIDADE PROFISSIONAL ---- */
+        .ok {
+            background: rgba(0,155,0,0.15);
+            color: rgb(0,120,0);
+        }
 
-            .estado-tag {
-                padding: .35rem .7rem;
-                border-radius: 999px;
-                font-size: .75rem;
-                display: inline-block;
-            }
+        .falta {
+            background: rgba(255,0,0,0.15);
+            color: rgb(180,0,0);
+        }
 
-            .ok {
-                background: rgba(0,155,0,0.15);
-                color: rgb(0,120,0);
-            }
+        .just {
+            background: rgba(255,165,0,0.2);
+            color: rgb(180,110,0);
+        }
 
-            .falta {
-                background: rgba(255,0,0,0.15);
-                color: rgb(180,0,0);
-            }
+        .estado-opcoes {
+            display: flex;
+            gap: .3rem;
+        }
 
-            .just {
-                background: rgba(255,165,0,0.2);
-                color: rgb(180,110,0);
-            }
+        .estado-btn {
+            padding: .35rem .6rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            cursor: pointer;
+            font-size: .8rem;
+            transition: .2s;
+        }
 
-            .estado-opcoes {
-                display: flex;
-                gap: .3rem;
-            }
+        .estado-btn:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
 
-            .estado-btn {
-                padding: .35rem .6rem;
-                border-radius: 6px;
-                border: 1px solid var(--border);
-                background: var(--bg);
-                cursor: pointer;
-                font-size: .8rem;
-                transition: .2s;
-            }
-
-            .estado-btn:hover {
-                background: var(--accent-soft);
-                color: var(--accent);
-            }
-
-            .obs-input {
-                width: 100%;
-                padding: .45rem .6rem;
-                border-radius: 6px;
-                border: 1px solid var(--border);
-                background: var(--bg);
-                color: var(--text);
-            }
-
-
-
+        .obs-input {
+            width: 100%;
+            padding: .45rem .6rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+        }
 
         /* ------------------ FOOTER ------------------ */
 
@@ -711,6 +760,13 @@
             <button><span>Assiduidade</span></button>
             <button><span>Calendário</span></button>
             <button><span>Ajuda</span></button>
+
+            <!-- Toggle Tema -->
+            <label class="theme-switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="icon icon-moon">🌙</span>
+                <span class="icon icon-sun">☀️</span>
+            </label>
         </nav>
 
         <div class="header-meta">
@@ -853,47 +909,46 @@
                 </section>
 
                 <section class="assid-card">
-    <div class="assid-header">
-        <strong>Registo de Assiduidade</strong>
-        <span class="badge">Turma TPSI</span>
-    </div>
+                    <div class="assid-header">
+                        <strong>Registo de Assiduidade</strong>
+                        <span class="badge">Turma TPSI</span>
+                    </div>
 
-        <div class="assid-table">
-            <div class="head">Aluno</div>
-            <div class="head">Estado</div>
-            <div class="head">Observações</div>
+                    <div class="assid-table">
+                        <div class="head">Aluno</div>
+                        <div class="head">Estado</div>
+                        <div class="head">Observações</div>
 
-            <!-- João -->
-            <div>João Silva</div>
-            <div><span class="estado-tag ok">✔ Presente</span></div>
-            <div></div>
+                        <!-- João -->
+                        <div>João Silva</div>
+                        <div><span class="estado-tag ok">✔ Presente</span></div>
+                        <div></div>
 
-            <!-- Maria -->
-            <div>Maria Fernandes</div>
-            <div><span class="estado-tag just">ⓘ Justificada</span></div>
-            <div>Consulta médica</div>
+                        <!-- Maria -->
+                        <div>Maria Fernandes</div>
+                        <div><span class="estado-tag just">ⓘ Justificada</span></div>
+                        <div>Consulta médica</div>
 
-            <!-- Rui -->
-            <div>Rui Santos</div>
-            <div><span class="estado-tag falta">✖ Falta</span></div>
-            <div></div>
+                        <!-- Rui -->
+                        <div>Rui Santos</div>
+                        <div><span class="estado-tag falta">✖ Falta</span></div>
+                        <div></div>
 
-            <!-- Ana -->
-            <div>Ana Costa</div>
-            <div><span class="estado-tag ok">✔ Presente</span></div>
-            <div></div>
+                        <!-- Ana -->
+                        <div>Ana Costa</div>
+                        <div><span class="estado-tag ok">✔ Presente</span></div>
+                        <div></div>
 
-            <!-- Beatriz (exemplo editável) -->
-            <div>Beatriz Ramos</div>
-            <div class="estado-opcoes">
-                <button class="estado-btn">✔</button>
-                <button class="estado-btn">✖</button>
-                <button class="estado-btn">ⓘ</button>
-            </div>
-            <div><input class="obs-input" type="text" placeholder="Observações..." /></div>
-        </div>
-    </section>
-
+                        <!-- Beatriz (exemplo editável) -->
+                        <div>Beatriz Ramos</div>
+                        <div class="estado-opcoes">
+                            <button class="estado-btn">✔</button>
+                            <button class="estado-btn">✖</button>
+                            <button class="estado-btn">ⓘ</button>
+                        </div>
+                        <div><input class="obs-input" type="text" placeholder="Observações..." /></div>
+                    </div>
+                </section>
 
             </aside>
         </div>
