@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>SIDOC – Serviço de Informação dos Docentes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        /* ------------------ VARIÁVEIS E TEMA ------------------ */
+        :root {
+            color-scheme: light dark;
+            --bg: light-dark(#f5f5f5, #151515);
+            --bg-elevated: light-dark(#ffffff, #222222);
+            --text: light-dark(#111111, #f5f5f5);
+            --muted: light-dark(#666666, #bbbbbb);
+            --accent: #004b9b;
+            --accent-soft: rgba(0, 75, 155, 0.08);
+            --border: light-dark(#d0d0d0, #333333);
+            --radius: 10px;
+            --shadow-soft: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        /* ------------------ LAYOUT PRINCIPAL ------------------ */
+
+        .page {
+            display: grid;
+            grid-template-rows: subgrid;
+            grid-row: 1 / -1;
+        }
+
+        /* ------------------ HEADER ------------------ */
+
+        .header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 2.5rem;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-logo {
+            display: flex;
+            flex-direction: column;
+            font-size: .85rem;
+            line-height: 1.2;
+        }
+
+        .header-logo span:first-child {
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .header-logo span:last-child {
+            color: var(--muted);
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: center;
+            gap: .75rem;
+        }
+
+        .header-nav button {
+            border: none;
+            background: transparent;
+            padding: .55rem 1.1rem;
+            border-radius: 999px;
+            font-size: .9rem;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+            color: var(--muted);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: color .25s ease, transform .15s ease;
+        }
+
+        .header-nav button::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--accent-soft);
+            opacity: 0;
+            transform: scale(.8);
+            transition: opacity .25s ease, transform .25s ease;
+        }
+
+        .header-nav button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-nav button:hover {
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .header-nav button:hover::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .header-nav button.is-active {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .header-nav button.is-active::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: .8rem;
+            color: var(--muted);
+        }
+
+        .header-meta strong {
+            display: block;
+            font-size: .9rem;
+            color: var(--text);
+        }
+
+        /* ------------------ MAIN ------------------ */
+
+        main {
+            padding: 2rem 2.5rem 2.5rem;
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-main {
+            display: grid;
+            grid-template-columns: 2fr 1.4fr;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        /* ------------------ CARTÃO PRINCIPAL – SUMÁRIO ------------------ */
+
+        .card {
+            background: var(--bg-elevated);
+            border-radius: var(--radius);
+            padding: 1.5rem 1.75rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border);
+            display: grid;
+            gap: 1.25rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: baseline;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .card-subtitle {
+            font-size: .85rem;
+            color: var(--muted);
+        }
+
+        .badge {
+            padding: .2rem .6rem;
+            border-radius: 999px;
+            font-size: .75rem;
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .form-grid .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: .8rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--muted);
+            display: grid;
+            gap: .35rem;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        textarea,
+        select {
+            padding: .55rem .65rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font: inherit;
+            resize: vertical;
+        }
+
+        textarea {
+            min-height: 120px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: .75rem;
+            margin-top: .5rem;
+        }
+
+        .btn {
+            border-radius: 999px;
+            padding: .55rem 1.3rem;
+            font-size: .85rem;
+            border: 1px solid transparent;
+            cursor: pointer;
+            background: transparent;
+            color: var(--muted);
+            transition: background .2s ease, color .2s ease, transform .1s ease, box-shadow .2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+
+        .btn-secondary {
+            border-color: var(--border);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #003a76;
+        }
+
+        /* ------------------ DETAILS / SUMMARY (COMPONENTE ESPECIAL) ------------------ */
+
+        details {
+            border-radius: 8px;
+            border: 1px dashed var(--border);
+            padding: .6rem .8rem;
+            background: rgba(0,0,0,0.02);
+        }
+
+        summary {
+            cursor: pointer;
+            font-size: .8rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--muted);
+            list-style: none;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::before {
+            content: "▸";
+            display: inline-block;
+            margin-right: .4rem;
+            transition: transform .2s ease;
+        }
+
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        details[open] {
+            background: var(--accent-soft);
+        }
+
+        details .details-body {
+            margin-top: .6rem;
+            display: grid;
+            gap: .6rem;
+        }
+
+        /* ------------------ LISTA DE SUMÁRIOS ------------------ */
+
+        .sumarios-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr 1fr 1fr;
+            gap: .5rem;
+            font-size: .85rem;
+            align-items: center;
+        }
+
+        .sumarios-table .head {
+            font-weight: 600;
+            color: var(--muted);
+            padding-bottom: .4rem;
+        }
+
+        .sumarios-table div {
+            padding: .4rem .3rem;
+            border-radius: 6px;
+        }
+
+        .sumarios-table div:nth-child(n+6):nth-child(odd) {
+            background: rgba(0,0,0,0.03);
+        }
+
+        .estado {
+            padding: .2rem .6rem;
+            border-radius: 999px;
+            font-size: .75rem;
+        }
+
+        .estado.ok {
+            background: rgba(0,155,0,0.15);
+            color: rgb(0,120,0);
+        }
+
+        .estado.pendente {
+            background: rgba(255,165,0,0.2);
+            color: rgb(180,110,0);
+        }
+
+        .btn-mini {
+            padding: .3rem .8rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: transparent;
+            cursor: pointer;
+            font-size: .75rem;
+            transition: .2s;
+        }
+
+        .btn-mini:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        /* ------------------ CARTÃO LATERAL – CALENDÁRIO / ASSIDUIDADE ------------------ */
+
+        .side-stack {
+            display: grid;
+            gap: 1.25rem;
+        }
+
+        .calendar-card {
+            background: var(--bg-elevated);
+            border-radius: var(--radius);
+            padding: 1.2rem 1.4rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border);
+            display: grid;
+            gap: .75rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: .9rem;
+        }
+
+        .calendar-header strong {
+            font-size: .95rem;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: .25rem;
+        }
+
+        .calendar-nav button {
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: transparent;
+            width: 26px;
+            height: 26px;
+            font-size: .8rem;
+            cursor: pointer;
+            color: var(--muted);
+            transition: background .2s ease, color .2s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: .25rem;
+            font-size: .7rem;
+        }
+
+        .calendar-grid span {
+            text-align: center;
+            padding: .25rem 0;
+            border-radius: 6px;
+        }
+
+        .calendar-grid .dow {
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .calendar-grid .day {
+            border: 1px solid transparent;
+        }
+
+        .calendar-grid .day.is-today {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            font-weight: 600;
+        }
+
+        .calendar-grid .day.has-class {
+            background: rgba(0, 155, 0, 0.08);
+            border-color: rgba(0, 155, 0, 0.4);
+        }
+
+        .legend {
+            display: flex;
+            gap: .75rem;
+            font-size: .7rem;
+            color: var(--muted);
+        }
+
+        .legend span::before {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            margin-right: .25rem;
+            vertical-align: middle;
+        }
+
+        .legend .l-class::before {
+            background: rgba(0, 155, 0, 0.4);
+        }
+
+        .legend .l-today::before {
+            background: var(--accent);
+        }
+
+        .assid-card {
+            background: var(--bg-elevated);
+            border-radius: var(--radius);
+            padding: 1.1rem 1.4rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border);
+            display: grid;
+            gap: .75rem;
+        }
+
+        .assid-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: .9rem;
+        }
+
+        .assid-table {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: .25rem .5rem;
+            font-size: .8rem;
+        }
+
+        .assid-table div {
+            padding: .25rem .3rem;
+            border-radius: 4px;
+        }
+
+        .assid-table .head {
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .assid-table .row:nth-child(odd) div {
+            background: rgba(0,0,0,0.02);
+        }
+
+        /* ------------------ FOOTER ------------------ */
+
+        footer {
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            padding: 1.2rem 2.5rem 1.4rem;
+            display: grid;
+            grid-template-columns: subgrid;
+        }
+
+        .footer-inner {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .footer-logos {
+            display: flex;
+            gap: .75rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-logo {
+            width: 80px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .65rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .footer-text {
+            font-size: .75rem;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width .2s ease;
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        /* ------------------ RESPONSIVO – RANGE SYNTAX ------------------ */
+
+        @media (width < 960px) {
+            .grid-main {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        @media (width < 720px) {
+            .header {
+                grid-template-columns: 1fr;
+                row-gap: .5rem;
+                text-align: center;
+            }
+
+            .header-meta {
+                text-align: center;
+            }
+
+            main {
+                padding-inline: 1.25rem;
+            }
+
+            footer {
+                padding-inline: 1.25rem;
+            }
+
+            .footer-inner {
+                grid-template-columns: 1fr;
+                text-align: center;
+                justify-items: center;
+            }
+
+            .footer-text {
+                justify-content: center;
+            }
+        }
+
+        @media (width < 520px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding-inline: 1.1rem;
+            }
+
+            .header-nav {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <header class="header">
+        <div class="header-logo">
+            <span>Universidade da Madeira</span>
+            <span>SIDOC – Serviço de Informação dos Docentes</span>
+        </div>
+
+        <nav class="header-nav">
+            <button class="is-active"><span>Sumários</span></button>
+            <button><span>Assiduidade</span></button>
+            <button><span>Calendário</span></button>
+            <button><span>Ajuda</span></button>
+        </nav>
+
+        <div class="header-meta">
+            <strong>Design Hipermédia</strong>
+            CTeSP TPSI · 1.º Ano · 2025/2026
+        </div>
+    </header>
+
+    <main>
+        <div class="grid-main">
+
+            <!-- CARTÃO PRINCIPAL: SUMÁRIO -->
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Registo de Sumário</div>
+                        <div class="card-subtitle">Preenchimento do sumário da aula selecionada</div>
+                    </div>
+                    <span class="badge">v3.2.3</span>
+                </div>
+
+                <form class="form-grid">
+                    <label>
+                        Unidade Curricular
+                        <input type="text" value="Design Hipermédia" />
+                    </label>
+
+                    <label>
+                        Data
+                        <input type="date" />
+                    </label>
+
+                    <label>
+                        Hora
+                        <input type="time" />
+                    </label>
+
+                    <label class="full">
+                        Tópico do Sumário
+                        <input type="text" placeholder="Introdução ao CSS Grid, Subgrid e Media Queries" />
+                    </label>
+
+                    <label class="full">
+                        Descrição do Sumário
+                        <textarea placeholder="Descrição detalhada dos conteúdos lecionados, exercícios realizados e recursos utilizados."></textarea>
+                    </label>
+
+                    <details class="full">
+                        <summary>Opções avançadas do registo</summary>
+                        <div class="details-body">
+                            <label>
+                                Observações internas
+                                <textarea rows="3" placeholder="Notas apenas visíveis para o docente."></textarea>
+                            </label>
+                            <label>
+                                Tipo de aula
+                                <select>
+                                    <option>Teórica</option>
+                                    <option>Prática</option>
+                                    <option>Teórico-prática</option>
+                                    <option>Laboratorial</option>
+                                </select>
+                            </label>
+                        </div>
+                    </details>
+
+                    <div class="form-actions full">
+                        <button type="reset" class="btn btn-secondary">Limpar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Sumário</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- LISTA DE SUMÁRIOS -->
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Lista de Sumários</div>
+                        <div class="card-subtitle">Sumários já submetidos nesta unidade curricular</div>
+                    </div>
+                </div>
+
+                <div class="sumarios-table">
+                    <div class="head">Data</div>
+                    <div class="head">Hora</div>
+                    <div class="head">Tópico</div>
+                    <div class="head">Estado</div>
+                    <div class="head">Ações</div>
+
+                    <div>10/01/2026</div>
+                    <div>09:00</div>
+                    <div>Introdução ao CSS Grid</div>
+                    <div><span class="estado ok">Submetido</span></div>
+                    <div><button class="btn-mini">Ver</button></div>
+
+                    <div>08/01/2026</div>
+                    <div>09:00</div>
+                    <div>Fundamentos de HTML Semântico</div>
+                    <div><span class="estado ok">Submetido</span></div>
+                    <div><button class="btn-mini">Ver</button></div>
+
+                    <div>05/01/2026</div>
+                    <div>09:00</div>
+                    <div>Introdução ao Curso</div>
+                    <div><span class="estado pendente">Pendente</span></div>
+                    <div><button class="btn-mini">Editar</button></div>
+                </div>
+            </section>
+
+            <!-- LADO DIREITO: CALENDÁRIO + ASSIDUIDADE -->
+            <aside class="side-stack">
+
+                <section class="calendar-card">
+                    <div class="calendar-header">
+                        <strong>Calendário</strong>
+                        <div class="calendar-nav">
+                            <button>&lt;</button>
+                            <button>&gt;</button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid">
+                        <span class="dow">S</span>
+                        <span class="dow">T</span>
+                        <span class="dow">Q</span>
+                        <span class="dow">Q</span>
+                        <span class="dow">S</span>
+                        <span class="dow">S</span>
+                        <span class="dow">D</span>
+
+                        <span></span><span></span><span class="day">1</span><span class="day">2</span><span class="day has-class">3</span><span class="day">4</span><span class="day">5</span>
+                        <span class="day">6</span><span class="day has-class">7</span><span class="day">8</span><span class="day">9</span><span class="day is-today">10</span><span class="day">11</span><span class="day">12</span>
+                        <span class="day">13</span><span class="day has-class">14</span><span class="day">15</span><span class="day">16</span><span class="day">17</span><span class="day">18</span><span class="day">19</span>
+                        <span class="day">20</span><span class="day">21</span><span class="day has-class">22</span><span class="day">23</span><span class="day">24</span><span class="day">25</span><span class="day">26</span>
+                        <span class="day">27</span><span class="day">28</span><span class="day">29</span><span class="day">30</span><span class="day">31</span><span></span><span></span>
+                    </div>
+                    <div class="legend">
+                        <span class="l-class">Aula agendada</span>
+                        <span class="l-today">Hoje</span>
+                    </div>
+                </section>
+
+                <section class="assid-card">
+                    <div class="assid-header">
+                        <strong>Registo de Assiduidade</strong>
+                        <span class="badge">Turma TPSI</span>
+                    </div>
+                    <div class="assid-table">
+                        <div class="head">Aluno</div>
+                        <div class="head">Presença</div>
+                        <div class="head">Observações</div>
+
+                        <div class="row">
+                            <div>João Silva</div>
+                            <div>✔</div>
+                            <div></div>
+                        </div>
+                        <div class="row">
+                            <div>Maria Fernandes</div>
+                            <div>✖</div>
+                            <div>Justificada</div>
+                        </div>
+                        <div class="row">
+                            <div>Rui Santos</div>
+                            <div>✔</div>
+                            <div></div>
+                        </div>
+                        <div class="row">
+                            <div>Ana Costa</div>
+                            <div>✔</div>
+                            <div></div>
+                        </div>
+                    </div>
+                </section>
+
+            </aside>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-logos">
+                <div class="footer-logo">Madeira 2030</div>
+                <div class="footer-logo">RAM</div>
+                <div class="footer-logo">Portugal 2030</div>
+                <div class="footer-logo">UE</div>
+            </div>
+            <div class="footer-text">
+                <span>Os Fundos Europeus mais próximos de si.</span>
+                <div class="footer-links">
+                    <a href="#">Acessibilidade</a>
+                    <a href="#">Privacidade</a>
+                    <a href="#">Contactos</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div>
+</body>
+</html>
