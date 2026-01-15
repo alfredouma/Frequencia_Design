@@ -516,6 +516,64 @@
             background: rgba(0,0,0,0.02);
         }
 
+
+
+            /* ---- ASSIDUIDADE PROFISSIONAL ---- */
+
+            .estado-tag {
+                padding: .35rem .7rem;
+                border-radius: 999px;
+                font-size: .75rem;
+                display: inline-block;
+            }
+
+            .ok {
+                background: rgba(0,155,0,0.15);
+                color: rgb(0,120,0);
+            }
+
+            .falta {
+                background: rgba(255,0,0,0.15);
+                color: rgb(180,0,0);
+            }
+
+            .just {
+                background: rgba(255,165,0,0.2);
+                color: rgb(180,110,0);
+            }
+
+            .estado-opcoes {
+                display: flex;
+                gap: .3rem;
+            }
+
+            .estado-btn {
+                padding: .35rem .6rem;
+                border-radius: 6px;
+                border: 1px solid var(--border);
+                background: var(--bg);
+                cursor: pointer;
+                font-size: .8rem;
+                transition: .2s;
+            }
+
+            .estado-btn:hover {
+                background: var(--accent-soft);
+                color: var(--accent);
+            }
+
+            .obs-input {
+                width: 100%;
+                padding: .45rem .6rem;
+                border-radius: 6px;
+                border: 1px solid var(--border);
+                background: var(--bg);
+                color: var(--text);
+            }
+
+
+
+
         /* ------------------ FOOTER ------------------ */
 
         footer {
@@ -795,37 +853,47 @@
                 </section>
 
                 <section class="assid-card">
-                    <div class="assid-header">
-                        <strong>Registo de Assiduidade</strong>
-                        <span class="badge">Turma TPSI</span>
-                    </div>
-                    <div class="assid-table">
-                        <div class="head">Aluno</div>
-                        <div class="head">Presença</div>
-                        <div class="head">Observações</div>
+    <div class="assid-header">
+        <strong>Registo de Assiduidade</strong>
+        <span class="badge">Turma TPSI</span>
+    </div>
 
-                        <div class="row">
-                            <div>João Silva</div>
-                            <div>✔</div>
-                            <div></div>
-                        </div>
-                        <div class="row">
-                            <div>Maria Fernandes</div>
-                            <div>✖</div>
-                            <div>Justificada</div>
-                        </div>
-                        <div class="row">
-                            <div>Rui Santos</div>
-                            <div>✔</div>
-                            <div></div>
-                        </div>
-                        <div class="row">
-                            <div>Ana Costa</div>
-                            <div>✔</div>
-                            <div></div>
-                        </div>
-                    </div>
-                </section>
+        <div class="assid-table">
+            <div class="head">Aluno</div>
+            <div class="head">Estado</div>
+            <div class="head">Observações</div>
+
+            <!-- João -->
+            <div>João Silva</div>
+            <div><span class="estado-tag ok">✔ Presente</span></div>
+            <div></div>
+
+            <!-- Maria -->
+            <div>Maria Fernandes</div>
+            <div><span class="estado-tag just">ⓘ Justificada</span></div>
+            <div>Consulta médica</div>
+
+            <!-- Rui -->
+            <div>Rui Santos</div>
+            <div><span class="estado-tag falta">✖ Falta</span></div>
+            <div></div>
+
+            <!-- Ana -->
+            <div>Ana Costa</div>
+            <div><span class="estado-tag ok">✔ Presente</span></div>
+            <div></div>
+
+            <!-- Beatriz (exemplo editável) -->
+            <div>Beatriz Ramos</div>
+            <div class="estado-opcoes">
+                <button class="estado-btn">✔</button>
+                <button class="estado-btn">✖</button>
+                <button class="estado-btn">ⓘ</button>
+            </div>
+            <div><input class="obs-input" type="text" placeholder="Observações..." /></div>
+        </div>
+    </section>
+
 
             </aside>
         </div>
